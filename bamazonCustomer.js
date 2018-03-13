@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
   host: "localhost",
 
   // Port
-  port: 3306,
+  port: 8080,
 
   // Username
   user: "root",
@@ -44,7 +44,7 @@ connection.connect(function(err) {
 
 
 
-// Inventory
+// Inventory function
 
 function inventory() {
 
@@ -113,9 +113,9 @@ function purchaseTime() {
 
     .then(function(userPurchase) {
 
-            //connect to database to find stock_quantity in database. If user quantity input is greater than stock, decline purchase.
+            //Checks stock of selected product.
 
-            connection.query("SELECT * FROM products WHERE item_id=?", userPurchase.productId, function(err, result) {
+            connection.query("SELECT * FROM products WHERE item_id=?", userPurchase.product_id, function(err, result) {
                 for (var i = 0; i < result.length; i++) {
 
                     if (userPurchase.input_quantity > result[i].stock) {
@@ -135,17 +135,42 @@ function purchaseTime() {
                         console.log("----------------");
                         console.log("Product: " + result[i].product_name);
                         console.log("Department: " + result[i].department_name);
-                        console.log("Price: " + result[i].price);
-                        console.log("Quantity: " + userPurchase.inputNumber);
+                        console.log("Price: $" + result[i].price);
+                        console.log("Quantity: " + userPurchase.input_quantity);
                         console.log("----------------");
-                        console.log("Total: " + result[i].price * userPurchase.input_quantity);
+                        console.log("Total Price: $" + result[i].price * userPurchase.input_quantity);
                         console.log("===================================");
 
+                        var chosenProduct = (result[i].product_name);
+                         
                         var newStock = (result[i].stock - userPurchase.input_quantity);
                         var purchaseId = (userPurchase.product_id);
-                        console.log(newStock);
-                        confirmPrompt(newStock, purchaseId);
+
+                        // Testing
+                        console.log("Chosen Product ID: " + purchaseId);
+                        console.log(chosenProduct + " remaining in stock: "+ newStock);
+                        // confirmPrompt(newStock, purchaseId);
+
+
+
+                        // Building Updating String
+                        var updateQuery = "UPDATE products SET stock = " + (newStock) + " WHERE item_id = " + purchaseId;
+                        // console.log('updateQueryStr = ' + updateQueryStr);
+
+                        // Update the inventory
+                        connection.query(updateQuery, function(err, result) {
+                          if (err) throw err;
+
+                            console.log(result.affectedRows + " record(s) updated");
+                            console.log("===================================");
+
+                          continueShopping();
+
+
+                        })
                     }
+
+                    
                 }
             });
         });
@@ -154,6 +179,26 @@ function purchaseTime() {
 }
 
 
+
+// Continue Shopping Function
+function continueShopping() {
+
+    inquirer.prompt([{
+
+        name: "continue",
+        type: "confirm",  
+        message: "Would you like to purchase another item?",
+        default: true
+
+    }]).then(function(customer) {
+        if (customer.continue === true) {
+            inventory();
+        } else {
+            console.log("Have a Great Day!!! Come Back Soon!!!");
+            connection.end();
+        }
+    });
+}
 
 
 
