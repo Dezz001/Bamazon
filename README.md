@@ -1,8 +1,11 @@
 # Bamazon
 
 Week 12 Homework: BAMAZON
+
 Created by: Darrin Davis
-Project Links: 	https://github.com/Dezz001/Bamazon.git 
+
+Project Links: 	https://github.com/Dezz001/Bamazon.git
+
 https://drive.google.com/drive/folders/1gfBtb4Hm3adcbLbGbUYUsoUgsTYrwt2Z?usp=sharing
 
 
@@ -12,4 +15,5 @@ My tools package for this assignment includes MAMP as a server, mySQL to develop
 Should you have any questions please do not hesitate to reach out to me at dezz001@yahoo.com
 
 Thank You
+
 Darrin Davis
